@@ -6,8 +6,6 @@ namespace Modules\DbForge\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-// use Modules\DbForge\Models\DbForgeQueryLog; // Model not found
-
 /**
  * DbForgeQueryLog factory.
  *
@@ -51,15 +49,15 @@ class DbForgeQueryLogFactory extends Factory
             ]),
             'query_type' => $this->faker->randomElement(['SELECT', 'INSERT', 'UPDATE', 'DELETE', 'CREATE', 'ALTER', 'DROP', 'SHOW', 'DESCRIBE', 'EXPLAIN', 'OPTIMIZE', 'ANALYZE', 'CHECK', 'REPAIR']),
             'table_name' => $this->faker->randomElement(['users', 'posts', 'comments', 'orders', 'products', 'categories', 'tags', 'permissions', 'roles', 'settings', 'logs', 'notifications']),
-            'execution_time' => $this->faker->numberBetween(1, 5000), // milliseconds
-            'rows_affected' => $this->faker->optional()->numberBetween(0, 10000),
-            'rows_returned' => $this->faker->optional()->numberBetween(0, 10000),
-            'memory_usage' => $this->faker->numberBetween(1024, 1048576), // bytes
-            'cpu_usage' => $this->faker->numberBetween(1, 100), // percentage
+            'execution_time' => $this->faker->numberBetween(1, 5000),
+            'rows_affected' => $this->faker->optional()->numberBetween(0, 100),
+            'rows_returned' => $this->faker->optional()->numberBetween(0, 1000),
+            'memory_usage' => $this->faker->numberBetween(1024, 1048576),
+            'cpu_usage' => $this->faker->numberBetween(1, 100),
             'status' => $this->faker->randomElement(['success', 'error', 'warning', 'slow', 'timeout']),
             'error_message' => $this->faker->optional()->sentence(),
-            'error_code' => $this->faker->optional()->numberBetween(1000, 9999),
-            'user_id' => $this->faker->optional()->numberBetween(1, 100),
+            'error_code' => $this->faker->optional()->numberBetween(100, 500),
+            'user_id' => $this->faker->optional()->numberBetween(1, 1000),
             'ip_address' => $this->faker->ipv4(),
             'user_agent' => $this->faker->userAgent(),
             'session_id' => $this->faker->uuid(),
@@ -73,22 +71,22 @@ class DbForgeQueryLogFactory extends Factory
                 'is_prepared' => $this->faker->boolean(20),
                 'is_cached' => $this->faker->boolean(10),
                 'cache_hit' => $this->faker->optional()->boolean(),
-                'cache_time' => $this->faker->optional()->numberBetween(1, 1000),
-                'lock_wait_time' => $this->faker->optional()->numberBetween(0, 1000),
+                'cache_time' => $this->faker->optional()->numberBetween(1, 100),
+                'lock_wait_time' => $this->faker->optional()->numberBetween(1, 100),
                 'lock_acquired' => $this->faker->optional()->boolean(),
                 'deadlock_detected' => $this->faker->optional()->boolean(),
                 'temp_tables_created' => $this->faker->optional()->numberBetween(0, 5),
                 'filesort_used' => $this->faker->optional()->boolean(),
                 'full_scan' => $this->faker->optional()->boolean(),
-                'index_used' => $this->faker->optional()->randomElement(['PRIMARY', 'idx_users_email', 'idx_posts_user_id', 'idx_comments_post_id']),
-                'explain_plan' => $this->faker->optional()->randomElement(['table scan', 'index scan', 'range scan', 'unique scan']),
+                'index_used' => $this->faker->optional()->word(),
+                'explain_plan' => $this->faker->optional()->sentence(),
             ],
             'settings' => [
                 'log_slow_queries' => $this->faker->boolean(80),
                 'slow_query_threshold' => $this->faker->numberBetween(100, 5000),
                 'log_all_queries' => $this->faker->boolean(60),
                 'log_errors_only' => $this->faker->boolean(20),
-                'max_log_size' => $this->faker->numberBetween(1048576, 104857600), // 1MB to 100MB
+                'max_log_size' => $this->faker->numberBetween(1048576, 104857600),
                 'retention_days' => $this->faker->numberBetween(7, 365),
                 'compress_logs' => $this->faker->boolean(70),
                 'encrypt_logs' => $this->faker->boolean(30),
@@ -313,7 +311,7 @@ class DbForgeQueryLogFactory extends Factory
     public function highMemory(): static
     {
         return $this->state(fn (array $attributes) => [
-            'memory_usage' => $this->faker->numberBetween(10485760, 104857600), // 10MB to 100MB
+            'memory_usage' => $this->faker->numberBetween(10485760, 104857600),
             'cpu_usage' => $this->faker->numberBetween(70, 100),
         ]);
     }
@@ -324,7 +322,7 @@ class DbForgeQueryLogFactory extends Factory
     public function lowMemory(): static
     {
         return $this->state(fn (array $attributes) => [
-            'memory_usage' => $this->faker->numberBetween(1024, 10240), // 1KB to 10KB
+            'memory_usage' => $this->faker->numberBetween(1024, 10240),
             'cpu_usage' => $this->faker->numberBetween(1, 30),
         ]);
     }
@@ -374,7 +372,7 @@ class DbForgeQueryLogFactory extends Factory
      */
     public function withTransaction(): static
     {
-        return $this->state(function (array $attributes): array {
+        return $this->state(function (array $attributes) {
             /** @var array<string, mixed> $existingMetadata */
             $existingMetadata = is_array($attributes['metadata'] ?? null) ? $attributes['metadata'] : [];
 
@@ -392,7 +390,7 @@ class DbForgeQueryLogFactory extends Factory
      */
     public function withoutTransaction(): static
     {
-        return $this->state(function (array $attributes): array {
+        return $this->state(function (array $attributes) {
             /** @var array<string, mixed> $existingMetadata */
             $existingMetadata = is_array($attributes['metadata'] ?? null) ? $attributes['metadata'] : [];
 
@@ -410,7 +408,7 @@ class DbForgeQueryLogFactory extends Factory
      */
     public function usingIndex(): static
     {
-        return $this->state(function (array $attributes): array {
+        return $this->state(function (array $attributes) {
             /** @var array<string, mixed> $existingMetadata */
             $existingMetadata = is_array($attributes['metadata'] ?? null) ? $attributes['metadata'] : [];
 
@@ -429,7 +427,7 @@ class DbForgeQueryLogFactory extends Factory
      */
     public function fullTableScan(): static
     {
-        return $this->state(function (array $attributes): array {
+        return $this->state(function (array $attributes) {
             /** @var array<string, mixed> $existingMetadata */
             $existingMetadata = is_array($attributes['metadata'] ?? null) ? $attributes['metadata'] : [];
 

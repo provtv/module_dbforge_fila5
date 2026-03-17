@@ -6,8 +6,6 @@ namespace Modules\DbForge\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-// use Modules\DbForge\Models\DbForgeOperation; // Model not found
-
 /**
  * DbForgeOperation factory.
  *
@@ -55,7 +53,7 @@ class DbForgeOperationFactory extends Factory
             ],
             'status' => $this->faker->randomElement(['pending', 'running', 'completed', 'failed']),
             'error_message' => $this->faker->optional()->sentence(),
-            'created_by' => $this->faker->optional()->numberBetween(1, 100),
+            'created_by' => $this->faker->optional()->numberBetween(1, 1000),
             'completed_at' => $this->faker->optional()->dateTimeBetween('-1 month', 'now'),
         ];
     }
@@ -190,7 +188,7 @@ class DbForgeOperationFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'operation_type' => 'create_index',
             'operation_data' => [
-                'index_name' => $this->faker->word().'_index',
+                'index_name' => $this->faker->word(),
                 'index_type' => $this->faker->randomElement(['btree', 'hash', 'fulltext']),
                 'columns' => $this->faker->randomElements(['id', 'name', 'email', 'created_at'], $this->faker->numberBetween(1, 3)),
                 'unique' => $this->faker->boolean(30),
@@ -210,7 +208,7 @@ class DbForgeOperationFactory extends Factory
                 'include_data' => $this->faker->boolean(80),
                 'include_structure' => true,
                 'compression' => $this->faker->randomElement(['none', 'gzip', 'bzip2']),
-                'backup_path' => '/backups/tables/'.$this->faker->date('Y-m-d').'/',
+                'backup_path' => '/backups/tables/'.$this->faker->date('Y-m-d'),
             ],
         ]);
     }

@@ -110,7 +110,7 @@ class ImportMdbToSQLite extends Command
                 throw new RuntimeException('Impossibile eseguire mdb-schema. Assicurati che mdb-tools sia installato.');
             }
 
-            $tableSchemas = explode(";\n", $form);
+            $tableSchemas = explode(");\n", $form);
 
             foreach ($tableSchemas as $tableSchema) {
                 $formStr = trim($tableSchema);
@@ -119,7 +119,7 @@ class ImportMdbToSQLite extends Command
                 }
 
                 $formStr = str_replace('`', '"', $formStr);
-                shell_exec(sprintf('sqlite3 %s "%s;"', $sqliteDb, $formStr));
+                shell_exec(sprintf('sqlite3 %s "%s));"', $sqliteDb, $formStr));
             }
         } catch (Exception $e) {
             throw new RuntimeException(sprintf('Errore durante la creazione delle tabelle: %s', $e->getMessage()));
